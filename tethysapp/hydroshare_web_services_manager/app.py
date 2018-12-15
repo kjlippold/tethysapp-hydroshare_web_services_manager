@@ -32,12 +32,12 @@ class HydroshareWebServicesManager(TethysAppBase):
             ),
             UrlMap(
                 name='register_services',
-                url='hydroshare-web-services-manager/api/register_services',
+                url='hydroshare-web-services-manager/api/register-services',
                 controller='hydroshare_web_services_manager.api.register_services'
             ),
             UrlMap(
                 name='unregister_services',
-                url='hydroshare-web-services-manager/api/unregister_services',
+                url='hydroshare-web-services-manager/api/unregister-services',
                 controller='hydroshare_web_services_manager.api.unregister_services'
             )
         )
