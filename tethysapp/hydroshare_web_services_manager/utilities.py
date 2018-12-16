@@ -73,7 +73,6 @@ def add_geoserver_workspace(res_id):
     data = json.dumps({"workspace": {"name": workspace_id}})
     rest_url = "/".join((geoserver_url, "workspaces"))
     response = requests.post(rest_url, headers=headers, data=data, auth=geoserver_auth)
-    print response.status_code
     return workspace_id
 
 
@@ -87,6 +86,8 @@ def get_database_list(res_id):
     hydroshare_url = custom_settings.get(name='hydroshare_url').value
     rest_url = "/".join((hydroshare_url, "resource", res_id, "file_list"))
     response = requests.get(rest_url)
+    if response.status_code != 200:
+        return "Invalid"
 
     file_list = json.loads(response.content)["results"]
 
@@ -123,6 +124,14 @@ def get_database_list(res_id):
                         "verification": "featureType"
                     }
                 )
+        if result["url"].split("/")[-1].split(".")[-1] == "sqlite":
+            db_list["wof"].append(
+                {
+                    "layer_id": "L-" + str(result["id"]),
+                    "hs_path": "/".join(result["url"].split("/")[4:]),
+                    "layer_title": ".".join(result["url"].split("/")[-1].split(".")[:-1])
+                }
+            )
 
     return db_list
 
@@ -136,18 +145,12 @@ def register_geoserver_databases(workspace_id, db_list):
         geoserver_user, 
         geoserver_pass
     )
-    print db_list
-    print ":::::::::::::"
     for layer in db_list:
-    	print layer
-        #if any(char in str(layer["layer_title"]) for char in "+/<>[]"):
-        #    continue
-            
         rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"], ".".join(("external", layer["file_type"]))))
         dir_path = [geoserver_directory, layer["hs_path"]]
         data = "file://" + os.path.join(*dir_path)
         response = requests.put(rest_url, data=data, auth=geoserver_auth)
-        headers = 
+        headers = {"content-type": "application/json"}
         rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"], layer["layer_group"], ".".join((layer["layer_title"], "json"))))
         response = requests.get(rest_url, headers=headers, auth=geoserver_auth)
             
@@ -199,23 +202,57 @@ def register_geoserver_databases(workspace_id, db_list):
             except:
                 pass
 
-    if len(layer_errors) == len(layer_list):
-        result = self.remove_geoserver_layer(resource_id)
-        if result["success"] is not True:
-            return None
-        return None
-    else:
-        return_obj[resource_id]["success"] = True
-        return json.dumps(return_obj)
+
+def unregister_geoserver_databases(res_id):
+    workspace_id = "HS-" + str(res_id)
+    remove_geoserver_workspace(workspace_id)
 
 
-def unregister_geoserver_databases(db_list):
-    pass
+def register_wof_databases(res_id, db_list):
+    wof_url = custom_settings.get(name='wof_url').value
+    wof_directory = custom_settings.get(name='wof_resource_directory').value
+    for db in db_list:
+        rest_url = wof_url + "/resource/" + res_id + "/db"
+        db_path = wof_directory + db["hs_path"]
+        data = {
+            "resource_id": res_id,
+            "database_id": db["layer_id"],
+            "database_name": db["layer_title"],
+            "database_path": db_path
+        }
+        response = requests.post(rest_url, data=data)
+        print "::::::::::::::::::"
+        print response.status_code
+        print response.content
+        return response
 
 
-def register_wof_databases(db_list):
-    pass
+
+def unregister_wof_databases(res_id):
+    wof_url = custom_settings.get(name='wof_url').value
+    rest_url = wof_url + "/resource/" + res_id + "/db"
+    data = {"resource_id": res_id}
+    response = requests.get(rest_url, data=data)
+    if response.status_code != 404:
+    	print "000000000000000000"
+    	print response.content
+    	if json.loads(response.content) is not list:
+    		db_lis = [json.loads(response.content)]
+    	else:
+    		db_lis = json.loads(response.content)
+        for db in db_lis:
+            print db
+            print type(db)
+            rest_url = wof_url + "/resource/" + res_id + "/db/" + db["database_id"]
+            response = requests.delete(rest_url)
+    rest_url = wof_url + "/resource/" + res_id
+    response = requests.delete(rest_url)
+    return response
 
 
-def unregister_wof_databases(db_list):
-    pass
+def add_wof_resource(res_id):
+    wof_url = custom_settings.get(name='wof_url').value
+    rest_url = wof_url + "/resource"
+    data = {"resource_id": res_id}
+    response = requests.post(rest_url, data=data)
+    return response
