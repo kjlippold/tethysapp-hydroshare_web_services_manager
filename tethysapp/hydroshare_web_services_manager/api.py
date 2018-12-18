@@ -23,16 +23,18 @@ def update_services(request):
 
     if db_list == "Invalid":
         unregister_geoserver_databases(res_id)
-        unregister_wof_databases(res_id)
+        #unregister_wof_databases(res_id)
     else:
         if db_list["geoserver"]:
             workspace_id = add_geoserver_workspace(res_id)
             register_geoserver_databases(workspace_id, db_list["geoserver"])
 
         if db_list["wof"]:
-            unregister_wof_databases(res_id)
-            add_wof_resource(res_id)
-            register_wof_databases(res_id, db_list["wof"])
+            #unregister_wof_databases(res_id)
+            #add_wof_resource(res_id)
+            #register_wof_databases(res_id, db_list["wof"])
+            pass
 
     data = {"res_id": res_id}
+
     return JsonResponse(data)
