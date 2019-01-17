@@ -91,7 +91,7 @@ def get_database_list(res_id):
     print(response.content)
     print(":::::::")
     print(json.loads(response.content.decode('utf-8')))
-    file_list = json.loads(str(response.content))["results"]
+    file_list = json.loads(response.content.decode('utf-8'))["results"]
     print("Success")
 
     for result in file_list:
@@ -157,7 +157,7 @@ def register_geoserver_databases(workspace_id, db_list):
         rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"], layer["layer_group"], ".".join((layer["layer_title"], "json"))))
         response = requests.get(rest_url, headers=headers, auth=geoserver_auth)
             
-        if json.loads(str(response.content))[layer["verification"]]["enabled"] is False:
+        if json.loads(response.content.decode('utf-8'))[layer["verification"]]["enabled"] is False:
             headers = {"content-type": "application/json"}
             params = {"update": "overwrite", "recurse": True}
             rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"]))
@@ -239,10 +239,10 @@ def unregister_wof_databases(res_id):
     if response.status_code != 404:
         #print "000000000000000000"
         #print response.content
-        if json.loads(str(response.content)) is not list:
-            db_lis = [json.loads(str(response.content))]
+        if json.loads(response.content.decode('utf-8')) is not list:
+            db_lis = [json.loads(response.content.decode('utf-8'))]
         else:
-            db_lis = json.loads(str(response.content))
+            db_lis = json.loads(response.content.decode('utf-8'))
         for db in db_lis:
             #print db
             #print type(db)
