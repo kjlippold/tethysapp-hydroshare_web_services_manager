@@ -162,7 +162,7 @@ def register_geoserver_databases(workspace_id, db_list):
             rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"]))
             response = requests.delete(rest_url, params=params, auth=geoserver_auth, headers=headers)
 
-        data = response.content.replace('"name":"' + layer["layer_title"] + '"', '"name":"' + layer["layer_id"] + '"')
+        data = response.content.decode('utf-8').replace('"name":"' + layer["layer_title"] + '"', '"name":"' + layer["layer_id"] + '"')
         response = requests.put(rest_url, headers=headers, auth=geoserver_auth, data=data)
         if response.status_code != 200:
             headers = {"content-type": "application/json"}
@@ -175,7 +175,7 @@ def register_geoserver_databases(workspace_id, db_list):
             try:
                 layer_vrt = "https://www.hydroshare.org/resource/" + ".".join(layer["hs_path"].split(".")[:-1]) + ".vrt"
                 response = requests.get(layer_vrt)
-                vrt = etree.fromstring(response.content)
+                vrt = etree.fromstring(response.content.decode('utf-8'))
                 layer_max = None
                 layer_min = None
                 layer_ndv = None
