@@ -19,7 +19,7 @@ def update_services(request):
     res_id = request.GET.get('res_id')
 
     db_list = get_database_list(res_id)
-    print db_list
+    #print db_list
 
     if db_list == "Invalid":
         unregister_geoserver_databases(res_id)
