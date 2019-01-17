@@ -56,7 +56,7 @@ def remove_geoserver_workspace(workspace_id):
     }
     rest_url = "/".join((geoserver_url, "workspaces", workspace_id))
     response = requests.delete(rest_url, params=params, auth=geoserver_auth, headers=headers)
-    print response.status_code
+    #print response.status_code
 
 
 def add_geoserver_workspace(res_id):
@@ -221,9 +221,9 @@ def register_wof_databases(res_id, db_list):
             "database_path": db_path
         }
         response = requests.post(rest_url, data=data)
-        print "::::::::::::::::::"
-        print response.status_code
-        print response.content
+        #print("::::::::::::::::::")
+        #print(response.status_code)
+        #print(response.content)
         return response
 
 
@@ -234,15 +234,15 @@ def unregister_wof_databases(res_id):
     data = {"resource_id": res_id}
     response = requests.get(rest_url, data=data)
     if response.status_code != 404:
-    	print "000000000000000000"
-    	print response.content
-    	if json.loads(response.content) is not list:
-    		db_lis = [json.loads(response.content)]
-    	else:
-    		db_lis = json.loads(response.content)
+        #print "000000000000000000"
+        #print response.content
+        if json.loads(response.content) is not list:
+            db_lis = [json.loads(response.content)]
+        else:
+            db_lis = json.loads(response.content)
         for db in db_lis:
-            print db
-            print type(db)
+            #print db
+            #print type(db)
             rest_url = wof_url + "/resource/" + res_id + "/db/" + db["database_id"]
             response = requests.delete(rest_url)
     rest_url = wof_url + "/resource/" + res_id
