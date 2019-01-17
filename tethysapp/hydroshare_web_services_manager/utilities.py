@@ -88,11 +88,8 @@ def get_database_list(res_id):
     response = requests.get(rest_url)
     if response.status_code != 200:
         return "Invalid"
-    print(response.content)
-    print(":::::::")
-    print(json.loads(response.content.decode('utf-8')))
+
     file_list = json.loads(response.content.decode('utf-8'))["results"]
-    print("Success")
 
     for result in file_list:
         if result["content_type"] == "image/tiff" or result["content_type"] == "application/x-qgis":
@@ -156,7 +153,9 @@ def register_geoserver_databases(workspace_id, db_list):
         headers = {"content-type": "application/json"}
         rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"], layer["layer_group"], ".".join((layer["layer_title"], "json"))))
         response = requests.get(rest_url, headers=headers, auth=geoserver_auth)
-            
+
+        print(response.content.decode('utf-8'))
+
         if json.loads(response.content.decode('utf-8'))[layer["verification"]]["enabled"] is False:
             headers = {"content-type": "application/json"}
             params = {"update": "overwrite", "recurse": True}
