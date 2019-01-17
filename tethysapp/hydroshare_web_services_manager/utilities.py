@@ -88,8 +88,11 @@ def get_database_list(res_id):
     response = requests.get(rest_url)
     if response.status_code != 200:
         return "Invalid"
-
+    print(response.content)
+    print(":::::::")
+    print(json.loads(response.content.decode('utf-8')))
     file_list = json.loads(str(response.content))["results"]
+    print("Success")
 
     for result in file_list:
         if result["content_type"] == "image/tiff" or result["content_type"] == "application/x-qgis":
