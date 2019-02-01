@@ -30,9 +30,13 @@ def update_services(request):
             register_geoserver_databases(workspace_id, db_list["geoserver"])
 
         if db_list["wof"]:
+            print("111")
             unregister_wof_databases(res_id)
+            print("222")
             add_wof_resource(res_id)
+            print("333")
             register_wof_databases(res_id, db_list["wof"])
+            print("444")
 
     data = {"res_id": res_id}
 

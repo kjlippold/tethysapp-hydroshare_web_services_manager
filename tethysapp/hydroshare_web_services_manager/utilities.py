@@ -56,7 +56,7 @@ def remove_geoserver_workspace(workspace_id):
     }
     rest_url = "/".join((geoserver_url, "workspaces", workspace_id))
     response = requests.delete(rest_url, params=params, auth=geoserver_auth, headers=headers)
-    print(response.status_code)
+    #print(response.status_code)
 
 
 def add_geoserver_workspace(res_id):
@@ -73,7 +73,7 @@ def add_geoserver_workspace(res_id):
     data = json.dumps({"workspace": {"name": workspace_id}})
     rest_url = "/".join((geoserver_url, "workspaces"))
     response = requests.post(rest_url, headers=headers, data=data, auth=geoserver_auth)
-    print(response)
+    #print(response)
     return workspace_id
 
 
@@ -158,7 +158,7 @@ def register_geoserver_databases(workspace_id, db_list):
         rest_url = "/".join((geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"], layer["layer_group"], ".".join((layer["layer_title"], "json"))))
         response = requests.get(rest_url, headers=headers, auth=geoserver_auth)
 
-        print(response.content.decode('utf-8'))
+        #print(response.content.decode('utf-8'))
 
         if json.loads(response.content.decode('utf-8'))[layer["verification"]]["enabled"] is False:
             headers = {"content-type": "application/json"}
@@ -174,7 +174,7 @@ def register_geoserver_databases(workspace_id, db_list):
             params = {"update": "overwrite", "recurse": True}
             rest_url = "/".join((self.geoserver_url, "workspaces", workspace_id, layer["store_type"], layer["layer_id"]))
             response = requests.delete(rest_url, params=params, auth=geoserver_auth, headers=headers)
-            print(response)
+            #print(response)
             continue
         
         if layer["layer_type"] == "GeographicRaster":
@@ -238,6 +238,7 @@ def register_wof_databases(res_id, db_list):
         }
         print(data)
         response = requests.post(rest_url, data=data, auth=wof_auth)
+        print(response)
         return response
 
 
@@ -252,6 +253,7 @@ def unregister_wof_databases(res_id):
     network_id = "HS-" + str(res_id)
     rest_url = wof_url + "/network/" + network_id
     response = requests.delete(rest_url, auth=wof_auth)
+    print(response)
     return response
 
 
@@ -268,4 +270,5 @@ def add_wof_resource(res_id):
     data = {"network_id": network_id}
     print(data)
     response = requests.post(rest_url, data=data, auth=wof_auth)
+    print(response)
     return response
