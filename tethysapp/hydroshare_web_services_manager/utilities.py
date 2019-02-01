@@ -96,7 +96,6 @@ def get_database_list(res_id):
     file_list = json.loads(response.content.decode('utf-8'))["results"]
 
     for result in file_list:
-        result["logical_file_type"] = "None"
         if (result["logical_file_type"] == "GeoRasterLogicalFile" and result["content_type"] == "image/tiff") or (result["logical_file_type"] == "GeoFeatureLogicalFile" and result["content_type"] == "application/x-qgis"):
             layer_id = "L-" + str(result["id"])
             layer_path = "/".join(result["url"].split("/")[4:])
