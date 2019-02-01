@@ -228,6 +228,7 @@ def register_wof_databases(res_id, db_list):
     network_id = "HS-" + str(res_id)
     for db in db_list:
         rest_url = wof_url + "/rest/network/" + network_id + "/databases/"
+        print(rest_url)
         db_path = wof_directory + db["hs_path"]
         data = {
             "network_id": network_id,
