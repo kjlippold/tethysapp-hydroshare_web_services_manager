@@ -180,8 +180,12 @@ def register_geoserver_databases(workspace_id, db_list):
         if layer["layer_type"] == "GeographicRaster":
             try:
                 layer_vrt = "https://www.hydroshare.org/resource/" + ".".join(layer["hs_path"].split(".")[:-1]) + ".vrt"
+                print("::::::::::::::::::")
+                print(layer_vrt)
                 response = requests.get(layer_vrt)
+                print(response)
                 vrt = etree.fromstring(response.content.decode('utf-8'))
+                print(vrt)
                 layer_max = None
                 layer_min = None
                 layer_ndv = None
@@ -199,15 +203,20 @@ def register_geoserver_databases(workspace_id, db_list):
                 if layer_ndv == None:
                     raise Exception
                 layer_style = get_layer_style(layer_max, layer_min, layer_ndv, layer["layer_id"])
+                print(layer_style)
                 rest_url = geoserver_url + "/workspaces/" + workspace_id + "/styles"
                 headers = {"content-type": "application/vnd.ogc.sld+xml"}
                 response = requests.post(rest_url, data=layer_style, auth=geoserver_auth, headers=headers)
+                print("3")
+                print(response)
 
                 rest_url = geoserver_url + "/layers/" + layer["layer_id"]
                 headers = {"content-type": "application/json"}
                 body = '{"layer": {"defaultStyle": {"name": "' + layer["layer_id"] + '", "href":"https:\/\/geoserver.hydroshare.org\/geoserver\/rest\/styles\/' + layer["layer_id"] + '.json"}}}'
                 response = requests.put(rest_url, data=body, auth=geoserver_auth, headers=headers)
+                print(response)
             except:
+                print("FAILED")
                 pass
 
 

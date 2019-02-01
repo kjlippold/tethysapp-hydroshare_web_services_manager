@@ -18,7 +18,7 @@ def update_services(request):
     '''
 
     res_id = request.GET.get('res_id')
-    time.sleep(5)
+    time.sleep(2)
     db_list = get_database_list(res_id)
     print(db_list)
 
