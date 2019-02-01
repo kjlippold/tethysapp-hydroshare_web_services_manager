@@ -128,7 +128,7 @@ def get_database_list(res_id):
                         "verification": "featureType"
                     }
                 )
-        if result["url"].split("/")[-1].split(".")[-1] == "sqlite":
+        if (result["logical_file_type"] == "TimeSeriesLogicalFile" and result["url"].split("/")[-1].split(".")[-1] == "sqlite"):
             db_list["wof"].append(
                 {
                     "layer_id": "L-" + str(result["id"]),

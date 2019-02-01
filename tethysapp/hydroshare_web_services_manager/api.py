@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes
 from .app import HydroshareWebServicesManager as app
+import time
 from tethys_apps.models import TethysApp
 from .utilities import get_database_list, register_geoserver_databases, \
                        unregister_geoserver_databases, register_wof_databases, \
@@ -17,7 +18,7 @@ def update_services(request):
     '''
 
     res_id = request.GET.get('res_id')
-
+    time.sleep(1)
     db_list = get_database_list(res_id)
     print(db_list)
 
