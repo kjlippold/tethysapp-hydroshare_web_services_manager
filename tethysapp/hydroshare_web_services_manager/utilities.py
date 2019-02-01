@@ -92,7 +92,8 @@ def get_database_list(res_id):
     file_list = json.loads(response.content.decode('utf-8'))["results"]
 
     for result in file_list:
-        if result["content_type"] == "image/tiff" or result["content_type"] == "application/x-qgis":
+        result["logical_file_type"] = "None"
+        if (result["logical_file_type"] == "GeoRasterLogicalFile" and result["content_type"] == "image/tiff") or (result["logical_file_type"] == "GeoFeatureLogicalFile" and result["content_type"] == "application/x-qgis"):
             layer_id = "L-" + str(result["id"])
             layer_path = "/".join(result["url"].split("/")[4:])
             layer_title = ".".join(result["url"].split("/")[-1].split(".")[:-1])
@@ -211,50 +212,55 @@ def unregister_geoserver_databases(res_id):
 
 
 def register_wof_databases(res_id, db_list):
+    wof_user = custom_settings.get(name='wof_user').value
+    wof_pass = custom_settings.get(name='wof_pass').value
+    wof_auth = requests.auth.HTTPBasicAuth(
+        wof_user, 
+        wof_pass
+    )
     wof_url = custom_settings.get(name='wof_url').value
     wof_directory = custom_settings.get(name='wof_resource_directory').value
+    network_id = "HS-" + str(res_id)
     for db in db_list:
-        rest_url = wof_url + "/resource/" + res_id + "/db"
+        rest_url = wof_url + "/network/" + res_id + "/databases"
         db_path = wof_directory + db["hs_path"]
         data = {
-            "resource_id": res_id,
+            "network_id": network_id,
             "database_id": db["layer_id"],
             "database_name": db["layer_title"],
-            "database_path": db_path
+            "database_path": db_path,
+            "database_type": "odm2"
         }
-        response = requests.post(rest_url, data=data)
-        #print("::::::::::::::::::")
-        #print(response.status_code)
-        #print(response.content)
+        #print(data)
+        response = requests.post(rest_url, data=data, auth=wof_auth)
         return response
 
 
-
 def unregister_wof_databases(res_id):
+    wof_user = custom_settings.get(name='wof_user').value
+    wof_pass = custom_settings.get(name='wof_pass').value
+    wof_auth = requests.auth.HTTPBasicAuth(
+        wof_user, 
+        wof_pass
+    )
     wof_url = custom_settings.get(name='wof_url').value
-    rest_url = wof_url + "/resource/" + res_id + "/db"
-    data = {"resource_id": res_id}
-    response = requests.get(rest_url, data=data)
-    if response.status_code != 404:
-        #print "000000000000000000"
-        #print response.content
-        if json.loads(response.content.decode('utf-8')) is not list:
-            db_lis = [json.loads(response.content.decode('utf-8'))]
-        else:
-            db_lis = json.loads(response.content.decode('utf-8'))
-        for db in db_lis:
-            #print db
-            #print type(db)
-            rest_url = wof_url + "/resource/" + res_id + "/db/" + db["database_id"]
-            response = requests.delete(rest_url)
-    rest_url = wof_url + "/resource/" + res_id
-    response = requests.delete(rest_url)
+    network_id = "HS-" + str(res_id)
+    rest_url = wof_url + "/network/" + network_id
+    response = requests.delete(rest_url, auth=wof_auth)
     return response
 
 
 def add_wof_resource(res_id):
+    wof_user = custom_settings.get(name='wof_user').value
+    wof_pass = custom_settings.get(name='wof_pass').value
+    wof_auth = requests.auth.HTTPBasicAuth(
+        wof_user, 
+        wof_pass
+    )
     wof_url = custom_settings.get(name='wof_url').value
-    rest_url = wof_url + "/resource"
-    data = {"resource_id": res_id}
-    response = requests.post(rest_url, data=data)
+    network_id = "HS-" + str(res_id) 
+    rest_url = wof_url + "/networks"
+    data = {"network_id": network_id}
+    #print(data)
+    response = requests.post(rest_url, data=data, auth=wof_auth)
     return response
