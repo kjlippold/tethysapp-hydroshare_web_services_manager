@@ -179,7 +179,7 @@ def register_geoserver_databases(workspace_id, db_list):
         
         if layer["layer_type"] == "GeographicRaster":
             try:
-                layer_vrt = "https://www.hydroshare.org/resource/" + ".".join(layer["hs_path"].split(".")[:-1]) + ".vrt"
+                layer_vrt = "http://10.37.142.23:8000/resource/" + ".".join(layer["hs_path"].split(".")[:-1]) + ".vrt"
                 print("::::::::::::::::::")
                 print(layer_vrt)
                 response = requests.get(layer_vrt)
