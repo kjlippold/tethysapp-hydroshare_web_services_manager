@@ -86,7 +86,10 @@ def get_database_list(res_id):
 
     hydroshare_url = custom_settings.get(name='hydroshare_url').value
     rest_url = "/".join((hydroshare_url, "resource", res_id, "file_list"))
+    print(rest_url)
     response = requests.get(rest_url)
+    print(response)
+    print(response.content)
     if response.status_code != 200:
         return "Invalid"
 
