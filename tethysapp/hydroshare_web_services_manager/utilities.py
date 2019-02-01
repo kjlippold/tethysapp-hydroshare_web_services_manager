@@ -239,6 +239,7 @@ def register_wof_databases(res_id, db_list):
         print(data)
         response = requests.post(rest_url, data=data, auth=wof_auth)
         print(response)
+        print(response.content)
         return response
 
 
