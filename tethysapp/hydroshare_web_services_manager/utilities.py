@@ -231,15 +231,16 @@ def register_wof_databases(res_id, db_list):
         print(rest_url)
         db_path = wof_directory + db["hs_path"]
         data = {
-            "network_id": network_id,
-            "database_id": db["layer_id"],
-            "database_name": db["layer_title"],
-            "database_path": db_path,
+            "network_id": str(network_id),
+            "database_id": str(db["layer_id"]),
+            "database_name": str(db["layer_title"]),
+            "database_path": str(db_path),
             "database_type": "odm2"
         }
         print(data)
         response = requests.post(rest_url, data=data, auth=wof_auth)
         print(response)
+        print(response.content)
         return response
 
 
