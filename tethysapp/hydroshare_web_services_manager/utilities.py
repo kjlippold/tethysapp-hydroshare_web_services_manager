@@ -227,7 +227,7 @@ def register_wof_databases(res_id, db_list):
     wof_directory = custom_settings.get(name='wof_resource_directory').value
     network_id = "HS-" + str(res_id)
     for db in db_list:
-        rest_url = wof_url + "/rest/network/" + res_id + "/databases"
+        rest_url = wof_url + "/rest/network/" + res_id + "/databases/"
         db_path = wof_directory + db["hs_path"]
         data = {
             "network_id": network_id,
@@ -251,7 +251,7 @@ def unregister_wof_databases(res_id):
     )
     wof_url = custom_settings.get(name='wof_url').value
     network_id = "HS-" + str(res_id)
-    rest_url = wof_url + "/rest/network/" + network_id
+    rest_url = wof_url + "/rest/network/" + network_id + "/"
     response = requests.delete(rest_url, auth=wof_auth)
     print(response)
     return response
